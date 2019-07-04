@@ -1,0 +1,52 @@
+version: "{build}"
+
+image:
+  - Visual Studio 2017
+  - Ubuntu
+
+build: off
+
+stack: go 1.12
+
+environment:
+  GO111MODULE: on
+
+for:
+  - matrix:
+      only:
+        - image: Visual Studio 2017
+    environment:
+      GOPATH: c:\gopath
+      COVER_DIR: c:\gopath\src\github.com\dunbit\project-gadgets
+    clone_folder: c:\gopath\src\github.com\dunbit\project-gadgets
+    install:
+      - ps: |
+          Copy-Item "C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\mingw32-make.exe" -Destination "C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin\make.exe"
+          $env:PATH = 'C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;C:\go\bin;C:\gopath\bin;' + $env:PATH
+      - go env
+      - make.exe download
+    build_script:
+      - make.exe build
+    test_script:
+      - make.exe test-cover
+    on_success:
+      - ps: | 
+          $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
+          Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+          bash codecov.sh -f "cover.coverprofile"
+
+  - matrix:
+      only:
+        - image: Ubuntu
+    environment:
+      GOPATH: /usr/go/
+    clone_folder: /usr/go/src/github.com/dunbit/project-gadgets
+    install:
+      - go env
+      - make download
+    build_script:
+      - make build
+    test_script:
+      - make test-cover
+    on_success:
+      - curl -s https://codecov.io/bash | bash -s -- -c -F aFlag -f ./cover/cover.coverprofile

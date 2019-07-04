@@ -1,0 +1,73 @@
+# Copyright 2019 Authors of protobuf-gadgets
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+################################################################################
+# Cross Platform Config
+################################################################################
+ifdef ComSpec
+    SEP=\\
+else
+    SEP=/
+endif
+PATHSEP=$(strip $(SEP))
+
+################################################################################
+# Env Config
+################################################################################
+GO111MODULE=on
+
+################################################################################
+# Static Dir Config
+################################################################################
+ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+CMD_DIR := $(ROOT_DIR)/cmd
+
+################################################################################
+# Dynamic Dir Config
+################################################################################
+BUILD_DIR ?= $(ROOT_DIR)/build
+COVER_DIR ?= $(ROOT_DIR)/cover
+
+################################################################################
+# Tool Config
+################################################################################
+GO ?= go
+GINKGO ?= ginkgo
+CONTAINER_ENGINE ?= docker
+
+################################################################################
+# Go Config
+################################################################################
+GO_LDFLAGS_STATIC := -ldflags '-w -extldflags "-static" -s'
+
+GO_BUILD := $(GO) build
+GO_BUILD_STATIC := CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GO) build -a -tags netgo $(GO_LDFLAGS_STATIC)
+GO_INSTALL := $(GO) install
+GO_CLEAN := $(GO) clean
+GO_RUN := $(GO) run
+GO_MOD := $(GO) mod
+GO_GET := $(GO) get
+
+################################################################################
+# Ginkgo Config
+################################################################################
+GINKGO_TEST ?= $(GINKGO) -r --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --progress --compilers=2
+GINKGO_TEST_WATCH ?= $(GINKGO) watch -r --randomizeAllSpecs --failOnPending --trace --race --progress --compilers=2
+GINKGO_TEST_COVER ?= $(GINKGO) -r --randomizeAllSpecs --randomizeSuites --failOnPending --cover --trace --race --progress --compilers=2 -outputdir=$(COVER_DIR) -coverprofile=cover.coverprofile
+
+################################################################################
+# Subdir Config
+################################################################################
+SUBDIR := go-check-license
+SUBDIR_ALL := $(SUBDIR)
