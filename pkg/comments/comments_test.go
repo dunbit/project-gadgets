@@ -41,6 +41,8 @@ var _ = Describe("Comments", func() {
 			Entry("#", "#", "#", ""),
 			Entry("//     Hello", "//", "//     Hello", "    Hello"),
 			Entry("#      Hello", "#", "#     Hello", "    Hello"),
+			Entry("Hello", "//", "Hello", "Hello"),
+			Entry("Hello", "#", "Hello", "Hello"),
 		)
 	})
 })

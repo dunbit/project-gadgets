@@ -29,11 +29,7 @@ func Add(comment string, data string) string {
 
 // Strip removes the comments from the linedata
 func Strip(comment string, data string) string {
-	if strings.HasPrefix(data, comment) {
-		data = strings.TrimLeft(data, comment)
-	}
-	if strings.HasPrefix(data, " ") {
-		data = data[1:]
-	}
+	data = strings.TrimPrefix(data, comment)
+	data = strings.TrimPrefix(data, " ")
 	return data
 }
