@@ -25,8 +25,6 @@ func New(path string, comment string) *File {
 
 // ReadLicense ...
 func (f *File) ReadLicense() (l *license.License, rerr error) {
-	license := new(license.License)
-
 	file, err := os.Open(f.Path)
 	if err != nil {
 		return nil, err
@@ -39,6 +37,8 @@ func (f *File) ReadLicense() (l *license.License, rerr error) {
 	}()
 
 	scanner := bufio.NewScanner(file)
+
+	license := new(license.License)
 
 	for scanner.Scan() {
 		line := scanner.Text()

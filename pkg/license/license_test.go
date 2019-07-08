@@ -50,4 +50,50 @@ var _ = Describe("License", func() {
 			Expect(license.Lines()).To(Equal(lines))
 		})
 	})
+
+	Describe("IsEqual", func() {
+
+		It("Should return true if licenses are equal", func() {
+			l1 := &License{
+				Data: []string{
+					"some",
+					"magic",
+					"license",
+				},
+			}
+
+			l2 := &License{
+				Data: []string{
+					"some",
+					"magic",
+					"license",
+				},
+			}
+
+			equal := l1.IsEqual(l2)
+			Expect(equal).To(BeTrue())
+		})
+
+		It("Should return false if licenses are not equal", func() {
+			l1 := &License{
+				Data: []string{
+					"some",
+					"magic",
+					"license",
+				},
+			}
+
+			l2 := &License{
+				Data: []string{
+					"another",
+					"less",
+					"magic",
+					"license",
+				},
+			}
+
+			equal := l1.IsEqual(l2)
+			Expect(equal).To(BeFalse())
+		})
+	})
 })
