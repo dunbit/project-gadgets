@@ -76,6 +76,17 @@ func createTempFile(ext string, data string) (*os.File, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	err = file.Sync()
+	if err != nil {
+		return nil, err
+	}
+
+	err = file.Close()
+	if err != nil {
+		return nil, err
+	}
+
 	return file, nil
 }
 
@@ -96,7 +107,7 @@ var _ = Describe("Config", func() {
 		It("Should parse a yml file", func() {
 			file, err := createTempFile(".yml", exampleConfigYAML)
 			defer func() {
-				err := file.Close()
+				err := os.Remove(file.Name())
 				Expect(err).NotTo(HaveOccurred())
 			}()
 			Expect(err).NotTo(HaveOccurred())
@@ -109,7 +120,7 @@ var _ = Describe("Config", func() {
 		It("Should parse a yaml file", func() {
 			file, err := createTempFile(".yaml", exampleConfigYAML)
 			defer func() {
-				err := file.Close()
+				err := os.Remove(file.Name())
 				Expect(err).NotTo(HaveOccurred())
 			}()
 			Expect(err).NotTo(HaveOccurred())
@@ -122,7 +133,7 @@ var _ = Describe("Config", func() {
 		It("Should parse a json file", func() {
 			file, err := createTempFile(".json", exampleConfigJSON)
 			defer func() {
-				err := file.Close()
+				err := os.Remove(file.Name())
 				Expect(err).NotTo(HaveOccurred())
 			}()
 			Expect(err).NotTo(HaveOccurred())
@@ -139,21 +150,27 @@ var _ = Describe("Config", func() {
 		})
 
 		It("Should return err for non existing path", func() {
-			config, err := ReadFile("my/dir/config.txt")
+			config, err := ReadFile("my/dir/config.json")
 			Expect(err).To(HaveOccurred())
 			Expect(config).To(BeNil())
 		})
 
-		It("Should return err for non existing path", func() {
-			file, err := createTempFile(".ini", exampleConfigJSON)
+		It("Should return err for non supportes file type", func() {
+			config, err := ReadFile("/my/unsupported/file.ini")
+			Expect(err).To(Equal(ErrFileTypeInvalid))
+			Expect(config).To(BeNil())
+		})
+
+		It("Should return err if content of file is not json or yaml", func() {
+			file, err := createTempFile(".json", "some unsupported data")
 			defer func() {
-				err := file.Close()
+				err := os.Remove(file.Name())
 				Expect(err).NotTo(HaveOccurred())
 			}()
 			Expect(err).NotTo(HaveOccurred())
 
 			config, err := ReadFile(file.Name())
-			Expect(err).To(Equal(ErrFileTypeInvalid))
+			Expect(err).To(HaveOccurred())
 			Expect(config).To(BeNil())
 		})
 	})

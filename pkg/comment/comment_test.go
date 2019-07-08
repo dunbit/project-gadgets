@@ -1,18 +1,18 @@
-package comments_test
+package comment_test
 
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
-	. "github.com/dunbit/project-gadgets/pkg/comments"
+	. "github.com/dunbit/project-gadgets/pkg/comment"
 )
 
-var _ = Describe("Comments", func() {
+var _ = Describe("Comment", func() {
 
 	Describe("Add", func() {
 
-		DescribeTable("Should add the comments at the beginning of the line",
+		DescribeTable("Should add the comment at the beginning of the line",
 			func(comment string, data string, expected string) {
 				s := Add(comment, data)
 
@@ -29,7 +29,7 @@ var _ = Describe("Comments", func() {
 
 	Describe("Strip", func() {
 
-		DescribeTable("Should remove the comments from the beginning of the line",
+		DescribeTable("Should remove the comment from the beginning of the line",
 			func(comment string, data string, expected string) {
 				s := Strip(comment, data)
 

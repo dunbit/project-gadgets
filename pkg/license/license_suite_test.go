@@ -1,4 +1,4 @@
-package comments_test
+package license_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestComments(t *testing.T) {
+func TestLicense(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Comments Suite")
+	RunSpecs(t, "License Suite")
 }

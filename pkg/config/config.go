@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/hashicorp/go-multierror"
 	"gopkg.in/yaml.v2"
 )
 
@@ -37,27 +38,53 @@ type Config struct {
 	Excludes []string   `yaml:"excludes" json:"excludes"`
 }
 
+var types = [3]string{".json", ".yml", ".yaml"}
+
+func isSupported(ext string) bool {
+	for _, t := range types {
+		if t == ext {
+			return true
+		}
+	}
+	return false
+}
+
 // ReadFile ...
-func ReadFile(path string) (*Config, error) {
+func ReadFile(path string) (c *Config, rerr error) {
 	if path == "" {
 		return nil, ErrFilePathInvalid
+	}
+
+	if !isSupported(filepath.Ext(path)) {
+		return nil, ErrFileTypeInvalid
 	}
 
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			rerr = multierror.Append(rerr, err)
+		}
+	}()
+
+	var config *Config
 
 	switch filepath.Ext(path) {
 	case ".json":
-		return ReadIOJSON(file)
+		config, err = ReadIOJSON(file)
 	case ".yml":
 		fallthrough
 	case ".yaml":
-		return ReadIOYAML(file)
+		config, err = ReadIOYAML(file)
+	}
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, ErrFileTypeInvalid
+	return config, nil
 }
 
 // ReadString ...
