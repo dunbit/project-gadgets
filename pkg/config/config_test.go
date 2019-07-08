@@ -155,7 +155,7 @@ var _ = Describe("Config", func() {
 			Expect(config).To(BeNil())
 		})
 
-		It("Should return err for non supportes file type", func() {
+		It("Should return err for non supported file type", func() {
 			config, err := ReadFile("/my/unsupported/file.ini")
 			Expect(err).To(Equal(ErrFileTypeInvalid))
 			Expect(config).To(BeNil())

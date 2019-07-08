@@ -69,5 +69,5 @@ GINKGO_TEST_COVER ?= $(GINKGO) -r --randomizeAllSpecs --randomizeSuites --failOn
 ################################################################################
 # Subdir Config
 ################################################################################
-SUBDIR := go-check-license
+SUBDIR := check-license
 SUBDIR_ALL := $(SUBDIR)
