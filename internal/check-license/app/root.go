@@ -13,3 +13,22 @@
 // limitations under the License.
 
 package app
+
+import (
+	"fmt"
+	"os"
+	"github.com/spf13/cobra"
+)
+
+var rootCmd = &cobra.Command{
+	Use:   "check-license",
+	Short: "check-license helps managing license headers in sourcecode files",
+}
+  
+// Execute ...
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+	   	os.Exit(1)
+	}
+}

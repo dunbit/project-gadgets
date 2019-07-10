@@ -14,6 +14,10 @@
 
 package main
 
-func main() {
+import (
+	"github.com/dunbit/project-gadgets/internal/check-license/app"
+)
 
+func main() {
+	app.Execute()
 }
